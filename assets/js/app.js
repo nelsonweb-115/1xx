@@ -1,5 +1,7 @@
 // JavaScript Document
 
+window.onload = init();
+
 function init() {
 	
         window.addEventListener('scroll', function (e) {
@@ -23,25 +25,14 @@ function init() {
 			dataType: 'json',
 			success: function (data) {
 				
-				console.log('all good');
-				console.log(data.menu.length);
-				console.log(data.menu);	
+				var menu = menuBuilder (data.menu);
 				
-				if (data.menu.length > 0) {
-					
-					data.menu.forEach(function (data) {
-						
-						console.log(data.MenuName);
-						console.log(data.MenuLink);
-						
-						$('nav').append('<a href="' + data.MenuLink + '">' + data.MenuName + '</a>');
-						
-					});
-				}
+				$('nav').append(menu);
 
 			},
 			
 			error: function() {
+				
 				console.log('all is not good');
 	
 			}
@@ -50,4 +41,36 @@ function init() {
 	
     }
 
-    window.onload = init();
+   function menuBuilder(obj) {
+	   	   
+	   var theMenu = '';
+	   
+	   if (obj.length > 0) {
+		   
+		   theMenu = theMenu + '<ul>';
+		   
+		   obj.forEach(function (item) {
+			   
+			   theMenu = theMenu + '<li><a href="#">' + item.MenuName + '</a>';
+			   
+		   if (item.Menus.length > 0) {			   			   
+			   theMenu = theMenu + menuBuilder(item.Menus);
+			   
+		   	  }
+			   
+			   theMenu = theMenu + '</li>';
+			   
+		   });
+		   
+		   theMenu = theMenu + '</ul>';
+
+		   
+	   }else{
+		   
+		   console.log('no data');
+		   
+	   }
+	   
+	   	return theMenu;
+
+   }
