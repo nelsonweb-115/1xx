@@ -21,13 +21,16 @@ function init() {
 	
 		$.ajax({
 			method: 'GET',
-			url: 'assets/data/menu.json',
+			url: 'http://me.jrqazwsx.com/wp-json/wp-api-menus/v2/menus/2',
 			dataType: 'json',
 			success: function (data) {
 				
-				var menu = menuBuilder (data.menu);
+				$('nav').hide();
 				
-				$('nav').append(menu);
+				var menu = menuBuilder (data.items);
+				
+				$('nav').html(menu).slideDown();
+				
 				$("#loaderDiv").fadeOut("slow");
 				
 			},
@@ -52,10 +55,10 @@ function init() {
 		   
 		   obj.forEach(function (item) {
 			   
-			   theMenu = theMenu + '<li><a href="#">' + item.MenuName + '</a>';
+			   theMenu = theMenu + '<li><a href="#">' + item.title + '</a>';
 			   
-		   if (item.Menus.length > 0) {			   			   
-			   theMenu = theMenu + menuBuilder(item.Menus);
+		   if (item.children) {			   			   
+			   theMenu = theMenu + menuBuilder(item.children);
 			   
 		   	  }
 			   
