@@ -49,15 +49,44 @@ function init() {
 			
 		});
 	
+		$.ajax({
+				method: 'GET',
+				url: 'https://me.jrqazwsx.com/wp-json/wp-api-menus/v2/menus/17',
+				dataType: 'json',
+				success: function (data) {
+
+					var menu = menuBuilder (data.items, 'genLinks', 'footer-ul');
+
+					$('#genLinks').replaceWith(menu);
+
+					$('#genLinks li a').click(function () {
+					getPage($(this).data("pgid"));
+				});
+
+				},
+
+				error: function() {
+
+					console.log('all is not good');
+
+				}
+
+			});
+	
+			getPosts();
+	
     }
 
-   function menuBuilder(obj) {
+   function menuBuilder(obj, targetEl, classInfo) {
 	   	   
 	   var theMenu = '';
 	   
 	   if (obj.length > 0) {
+		   let target = (targetEl)?' id="'+targetEl+'"':'';
+		   let elClass = (classInfo)?' class="'+classInfo+'"':'';
 		   
-		   theMenu = theMenu + '<ul>';
+		   theMenu = theMenu + '<ul'+target+''+elClass+'>';
+		   console.log(theMenu +' '+target);
 		   
 		   obj.forEach(function (item) {
 			   
@@ -82,6 +111,7 @@ function init() {
 	   }
 	   
 	   	return theMenu;
+
 
    }
 
@@ -111,6 +141,34 @@ function init() {
 					$("#loaderDiv").fadeOut("slow");
 
 				});
+
+			},
+
+			error: function () {
+				console.log('bad');
+
+			}
+		});
+	}
+
+	function getPosts(obj) {
+
+		$.ajax({
+
+			method: 'GET',
+			url: 'https://me.jrqazwsx.com/wp-json/wp/v2/posts?orderby=date&order=desc&per_page=3',
+			dataType: 'json',
+			success: function (data) {
+				
+				$("#latestPosts").html('<p id="postLdr"><i class="fa fa-cogs"></i> Loading Posts</p>');
+				data.forEach(function (item) {
+					
+					var myDate = new Date(item.date);
+					
+					$("#latestPosts").prepend('<p>' + item.title.rendered + '<span>' + myDate.getMonth() + '-' + myDate.getDay() + '-' + myDate.getFullYear() + '</span></p>');
+					
+				});
+				$("#postLdr").remove();
 
 			},
 
